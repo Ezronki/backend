@@ -10,15 +10,11 @@ dotenv.config();
 // Import routes
 const authRouter = require("./routes/auth/auth-routes");
 const adminProductsRouter = require("./routes/admin/products-routes");
-
-
 const shopProductsRouter = require("./routes/shop/products-routes");
 const shopCartRouter = require("./routes/shop/cart-routes");
 const shopAddressRouter = require("./routes/shop/address-routes");
-
 const shopSearchRouter = require("./routes/shop/search-routes");
 const shopReviewRouter = require("./routes/shop/review-routes");
-
 const commonFeatureRouter = require("./routes/common/feature-routes");
 
 // Connect to MongoDB
@@ -49,6 +45,15 @@ app.use(
   })
 );
 
+// ✅ Fix Content-Security-Policy (CSP) Issue
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https://backend-o0sl.onrender.com https://your-client-url.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:;"
+  );
+  next();
+});
+
 // Middleware
 app.use(cookieParser());
 app.use(express.json());
@@ -56,15 +61,11 @@ app.use(express.json());
 // API Routes
 app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter);
-
-
 app.use("/api/shop/products", shopProductsRouter);
 app.use("/api/shop/cart", shopCartRouter);
 app.use("/api/shop/address", shopAddressRouter);
-
 app.use("/api/shop/search", shopSearchRouter);
 app.use("/api/shop/review", shopReviewRouter);
-
 app.use("/api/common/feature", commonFeatureRouter);
 
 // Start the server
