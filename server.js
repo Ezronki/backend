@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const helmet = require("helmet"); // ✅ Import Helmet
 
-// Load environment variables
 dotenv.config();
 
 // Import routes
@@ -29,30 +29,31 @@ mongoose
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS Configuration
+// ✅ Use Helmet to Fix Content-Security-Policy
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        imgSrc: ["'self'", "data:", "https://backend-o0sl.onrender.com", "https://your-client-url.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        connectSrc: ["'self'", process.env.CLIENT_URL || "http://localhost:5173"],
+      },
+    },
+  })
+);
+
+// ✅ CORS Configuration
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     methods: ["GET", "POST", "DELETE", "PUT"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cache-Control",
-      "Expires",
-      "Pragma",
-    ],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
-
-// ✅ Fix Content-Security-Policy (CSP) Issue
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https://backend-o0sl.onrender.com https://your-client-url.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:;"
-  );
-  next();
-});
 
 // Middleware
 app.use(cookieParser());
