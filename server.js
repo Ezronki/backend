@@ -36,7 +36,7 @@ const PORT = process.env.PORT || 3000;
 // CORS Configuration
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "https://www.track4.shop",
+    origin: process.env.CLIENT_URL || "https://client-qdj4.onrender.com",
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
